@@ -1,0 +1,147 @@
+
+\section{Numerical Solution of the 1D Laplace Equation}
+The 1D Laplace equation is given by:
+\begin{equation}
+    \frac{d^2 u}{dx^2} = 0,
+\end{equation}
+with boundary conditions:
+\begin{equation}
+    u(0) = A, \quad u(L) = B.
+\end{equation}
+
+\subsection{Finite Difference Approximation}
+Using the central difference method, the second derivative is approximated as:
+\begin{equation}
+    \frac{u_{i-1} - 2u_i + u_{i+1}}{\Delta x^2} = 0.
+\end{equation}
+Rearranging:
+\begin{equation}
+    u_i = \frac{u_{i-1} + u_{i+1}}{2}.
+\end{equation}
+
+\subsection{Matrix Formulation}
+For \( N \) interior points, define:
+
+\[
+\mathbf{u} = \left[ u_1, u_2, \dots, u_{N-1} \right]^T
+\]
+(unknown values)
+Boundary conditions:
+\[
+u_0 = A, \quad u_N = B
+\]
+Grid spacing:
+\[
+\Delta x = \frac{L}{N+1}
+\]
+The finite difference equations for all interior points lead to a system of N-2 equations:
+\[
+-2u_1 + u_2 = -A
+\]
+\[
+-u_1 - 2u_2 + u_3 = 0
+\]
+\[
+u_2 - 2u_3 + u_4 = 0
+\]
+\[
+\vdots
+\]
+\[
+u_{N-2} - 2u_{N-1} = -B
+\]
+For $N$ interior points, we construct the system:
+\begin{equation}
+    A \mathbf{u} = \mathbf{b},
+\end{equation}
+where:
+\begin{equation}
+    A =
+    \begin{bmatrix}
+        -2 & 1  & 0  & 0  & \cdots & 0  \\
+        1  & -2 & 1  & 0  & \cdots & 0  \\
+        0  & 1  & -2 & 1  & \cdots & 0  \\
+        \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+        0  & 0  & 0  & 1  & -2 & 1  \\
+        0  & 0  & 0  & 0  & 1  & -2
+    \end{bmatrix},
+\end{equation}
+The matrix A has dim: $(N-2)\times (N-2)$
+\begin{equation}
+    \mathbf{u} =
+    \begin{bmatrix}
+        u_1 \\
+        u_2 \\
+        u_3 \\
+        \vdots \\
+        u_{N-2} \\
+        u_{N-1}
+    \end{bmatrix},
+\end{equation}
+Note the dimension of $\bf{u}$:  $= N-2$ and same for $\bf{b}$. 
+\begin{equation}
+    \mathbf{b} =
+    \begin{bmatrix}
+        -A \\
+        0 \\
+        0 \\
+        \vdots \\
+        0 \\
+        -B
+    \end{bmatrix}.
+\end{equation}
+{\bf After soilving the equation one needs to add the elements u(0) and u(L) to obtain the full vector.}
+\subsection{Conclusion}
+The numerical solution approximates the exact solution, which is a linear function:
+\begin{equation}
+    u(x) = A + (B - A) \frac{x}{L}.
+\end{equation}
+This method can be extended to higher dimensions using iterative solvers like Gauss-Seidel.
+
+
+
+
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Numerical Solution of the 2D Laplace Equation: Finite Difference Approximation}
+
+The finite difference approximation for the second derivatives is given by:
+
+\[
+\frac{\partial^2 \phi}{\partial x^2} \approx \frac{\phi_{i+1,j} - 2\phi_{i,j} + \phi_{i-1,j}}{(\Delta x)^2}
+\]
+\[
+\frac{\partial^2 \phi}{\partial y^2} \approx \frac{\phi_{i,j+1} - 2\phi_{i,j} + \phi_{i,j-1}}{(\Delta y)^2}
+\]
+Substituting these into the Laplace equation:
+\[
+\frac{\phi_{i+1,j} - 2\phi_{i,j} + \phi_{i-1,j}}{(\Delta x)^2} + \frac{\phi_{i,j+1} - 2\phi_{i,j} + \phi_{i,j-1}}{(\Delta y)^2} = 0
+\]
+For a uniform grid (\(\Delta x = \Delta y = h\)), this simplifies to:
+\[
+\phi_{i+1,j} + \phi_{i-1,j} + \phi_{i,j+1} + \phi_{i,j-1} - 4\phi_{i,j} = 0
+\]
+Rearranging to solve for the value at each grid point:
+\[
+\phi_{i,j} = \frac{1}{4} (\phi_{i+1,j} + \phi_{i-1,j} + \phi_{i,j+1} + \phi_{i,j-1})
+\]
+
+\subsection{Iterative Methods}
+
+{\bf Jacobi Method}
+\[
+\phi_{i,j}^{(n+1)} = \frac{1}{4} (\phi_{i+1,j}^{(n)} + \phi_{i-1,j}^{(n)} + \phi_{i,j+1}^{(n)} + \phi_{i,j-1}^{(n)})
+\]
+{\bf Gauss-Seidel Method}
+\[
+\phi_{i,j}^{(n+1)} = \frac{1}{4} (\phi_{i+1,j}^{(n+1)} + \phi_{i-1,j}^{(n+1)} + \phi_{i,j+1}^{(n+1)} + \phi_{i,j-1}^{(n)})
+\]
+{ \bf  Successive Over-Relaxation (SOR)}
+\[
+\phi_{i,j}^{(n+1)} = (1 - \omega) \phi_{i,j}^{(n)} + \frac{\omega}{4} (\phi_{i+1,j}^{(n+1)} + \phi_{i-1,j}^{(n+1)} + \phi_{i,j+1}^{(n+1)} + \phi_{i,j-1}^{(n)})
+\]
+{\bf Convergence Criteria}
+Stop the iteration when the maximum change in \(\phi\) values between iterations is less than a specified tolerance.
+
+
+%%################################### bibliography ##################################
